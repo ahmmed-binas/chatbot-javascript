@@ -6,6 +6,66 @@
     </head>
     <body>
          <script type="module" src="index.js"></script>
+<script type="module">
+  const { renderChatbot, createChatBotMessage } = window.vanillaJsChatbot;
+
+        class MessageParser {
+        constructor(actionProvider) {
+            this.actionProvider = actionProvider;
+        }
+       
+        parse(message) {
+            const lower = message.toLowerCase();
+            if (lower.includes("hello")) {
+            this.actionProvider.sayHello()
+            } else {
+            console.log("xnklsk")
+            }
+        }
+        }
+
+
+
+            class ActionProvider {
+            constructor(
+                createChatBotMessage,
+                setStateFunc,
+                createClientMessage,
+                stateRef,
+                createCustomMessage,
+                ...rest
+            ) {
+                this.createChatBotMessage = createChatBotMessage;
+                this.setState = setStateFunc;
+                this.createClientMessage = createClientMessage;
+                this.stateRef = stateRef;
+                this.createCustomMessage = createCustomMessage;
+            }
+            sayHello(){
+                const msg = this.createChatBotMessage("Hello!")
+                this.setState((state)=>{
+                  return{
+                    ...state,messages:[...state.messages,msg]
+                  }  
+                })
+
+            }
+            }
+
+        const config = {
+    botName: "vanilla-chatbot",
+    initialMessages: [
+        createChatBotMessage("Hello 👋"),
+        createChatBotMessage("Do you need help?"),
+    ],
+    };
+
+        const rootEl = document.querySelector(".vanilla-chatbot");
+
+        renderChatbot(rootEl, config, MessageParser,ActionProvider);
+
+
+         </script>
 
         <div class="vanilla-chatbot">  
             
