@@ -6,8 +6,12 @@
     </head>
     <body>
          <script type="module" src="index.js"></script>
+         <button classname="chat-btn"></button>
 <script type="module">
   const { renderChatbot, createChatBotMessage } = window.vanillaJsChatbot;
+  import {keywords} from "./utils.js"
+
+
 
         class MessageParser {
         constructor(actionProvider) {
@@ -16,10 +20,11 @@
        
         parse(message) {
             const lower = message.toLowerCase();
-            if (lower.includes("hello")) {
+
+            if (keywords.some((word)=>lower.includes(word))) {
             this.actionProvider.sayHello()
             } else {
-            console.log("xnklsk")
+            console.log("type something")
             }
         }
         }
@@ -42,7 +47,7 @@
                 this.createCustomMessage = createCustomMessage;
             }
             sayHello(){
-                const msg = this.createChatBotMessage("Hello!")
+                const msg = this.createChatBotMessage("Hello 😃✨ please choose any obove options?")
                 this.setState((state)=>{
                   return{
                     ...state,messages:[...state.messages,msg]
@@ -52,13 +57,66 @@
             }
             }
 
-        const config = {
+    const config = {
     botName: "vanilla-chatbot",
     initialMessages: [
-        createChatBotMessage("Hello 👋"),
-        createChatBotMessage("Do you need help?"),
+        createChatBotMessage("Hi 👋 I'm Bot, your guide!"),
+        createChatBotMessage("What would you like to explore?", {
+        widget: "overview",   
+        }),
+    ],
+    widgets: [
+        {
+        widgetName: "overview",
+        widgetFunc: (props) => createOverviewWidget(props),
+        props: {},
+        mapStateToProps: ["overview"],
+        },
     ],
     };
+
+
+
+function createOverviewWidget( ActionProvider) {
+
+
+  const overallContainer = document.createElement("div");
+
+
+  const container = document.createElement("div");
+  container.classList.add("overview-widget");
+
+  const contactContainer = document.createElement("div");
+  contactContainer.classList.add("contact-container")
+
+
+  const btnProjects = document.createElement("button");
+  btnProjects.textContent = "📂 Projects";
+  btnProjects.className = "widget-btn";
+  btnProjects.onclick = () => props.actionProvider.handleShowProjects();
+
+  const btnSkills = document.createElement("button");
+  btnSkills.textContent = "💡 Skills";
+  btnSkills.className = "widget-btn";
+  btnSkills.onclick = () => props.actionProvider.handleShowSkills();
+
+  const btnContact = document.createElement("button");
+  btnContact.textContent = "📞 Contact";
+  btnContact.className = "widget-btn";
+  btnContact.onclick = () => props.actionProvider.handleShowContact();
+
+  container.appendChild(btnProjects);
+  container.appendChild(btnSkills);
+  contactContainer.appendChild(btnContact)
+  overallContainer.appendChild(container)
+  overallContainer.appendChild(contactContainer)
+
+  return overallContainer;
+}
+
+
+
+
 
         const rootEl = document.querySelector(".vanilla-chatbot");
 

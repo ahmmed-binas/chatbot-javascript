@@ -1,6 +1,7 @@
 import renderChat from "./chat/chat.js";
 import stateManager from "./state/state.js";
-import { createChatBotMessage, createClientMessage } from "./utils.js";
+import { createChatBotMessage, createClientMessage,getWidgets } from "./utils.js";
+import WidgetRegistry from "./widgetRegistry/widgetRegistry.js";
 
 let current;
 
@@ -17,23 +18,30 @@ const renderChatbot = (rootEl, config, messageParser, actionProvider) => {
 
   const messageParserInstance = new messageParser(actionProviderInstance);
 
+  const widgetRegistry  = new WidgetRegistry(updater,actionProviderInstance)
+  const widget = getWidgets(config)
+
+  widget.forEach(widget => { widgetRegistry.addWidget(widget)
 
   registerListeners((newState) =>
-    render(rootEl, newState, messageParserInstance, config, updater)
+    render(rootEl, newState, messageParserInstance, config, updater,widgetRegistry)
   );
 
 
-  render(rootEl, state, messageParserInstance, config, updater);
+    
+  });
+
+  render(rootEl, state, messageParserInstance, config, updater,widgetRegistry);
 
    return { messageParserInstance, actionProviderInstance };
 };
 
-const render = (rootEl, state, messageParserInstance, config, updater) => {
+const render = (rootEl, state, messageParserInstance, config, updater,widgetRegistry) => {
   if (current) {
     rootEl.removeChild(current);
   }
 
-  const chat = renderChat(state, messageParserInstance, config, updater);
+  const chat = renderChat(state, messageParserInstance, config, updater,widgetRegistry);
   current = chat;
   rootEl.appendChild(chat);
 };

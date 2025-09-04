@@ -1,8 +1,7 @@
-import { createClientMessage } from "../utils.js";
+import { createClientMessage, keywords } from "../utils.js";
 
 
-
-const renderChat = (config,messageParserInstance,state,updater) =>{
+const renderChat = (config,messageParserInstance,state,updater,widgetRegistry) =>{
     const chatContainer = document.createElement("div");
     chatContainer.classList.add("vanilla-chatbot-kit-chat-container");
 
@@ -14,12 +13,14 @@ const renderChat = (config,messageParserInstance,state,updater) =>{
     innerContainer.appendChild(createHeader(state));
 
     console.log(state)
+
   
 
 
     innerContainer.appendChild(createform(messageParserInstance,updater));
 
-    innerContainer.appendChild(createMessageContainer(config.messages))
+    innerContainer.appendChild(createMessageContainer(config.messages,widgetRegistry,state))
+
 
     return chatContainer;
 
@@ -59,6 +60,7 @@ const createform = (messageParserInstance,updater,state) =>{
     e.preventDefault();
     const { value } = input;
     const message = createClientMessage(value);
+if (value !== "" && keywords.some(word => value.includes(word))) {
     updater((state) => {
       return { ...state, messages: [...state.messages, message] };
       
@@ -67,7 +69,10 @@ const createform = (messageParserInstance,updater,state) =>{
 
     messageParserInstance.parse(value);
     
-    input.value = "";
+    input.value = "";}
+    else{
+        console.log("its empty")
+    }
   };
 
   form.onsubmit = handleSubmit;
@@ -89,7 +94,7 @@ const createform = (messageParserInstance,updater,state) =>{
 }
 
 
-const createMessageContainer = (messages) =>{
+const createMessageContainer = (messages,widgetRegistry,state) =>{
 
     const messageBox = document.createElement("div");
     messageBox.classList.add("vanilla-chatbot-kit-chat-message-container");
@@ -98,15 +103,31 @@ const createMessageContainer = (messages) =>{
 
     messages.forEach((mes) => {
 
-        const{message,type}  = mes
+        const{message,type,widget}  = mes
+
+        let msg;
+
         if(type== "bot"){
-                messageBox.appendChild(createBotChatMessage(message));
+            msg=  messageBox.appendChild(createBotChatMessage(message));
 
         }else{
-                messageBox.appendChild(createUserChatMessage(message));
+             msg =   messageBox.appendChild(createUserChatMessage(message));
         }
+        messageBox.appendChild(msg)
+
+            if (widget) {
+    const widgetMarkup = widgetRegistry.getWidget(widget, state);
+    if(widgetMarkup){
+        messageBox.appendChild(widgetMarkup)
+    }
+  }
         
     });
+
+
+  
+
+    
 
 
 

@@ -14,6 +14,10 @@ export const botMessage = (message) => {
   return false;
 };
 
+
+
+
+
 export const createChatMessage = (message, type) => {
   return {
     message: message,
@@ -77,3 +81,17 @@ export const validateProps = (config, MessageParser) => {
 
   return errors;
 };
+
+
+export const keywords = [
+  "hello", "hi", "hey", "hii", "hiii", "yo", "yoo", "hiya",
+  "howdy", "aloha", "bonjour", "hola", "namaste",
+  "good morning", "morning", "gm",
+  "good afternoon", "afternoon",
+  "good evening", "evening",
+  "good night", "night",
+  "wassup", "whatsup", "what's up",
+  "welcome", "greetings", "hey there", "hi there"
+];
+
+
